@@ -11,62 +11,66 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Animator animator;
     private bool isWalk;
-
-    [Header("Camera")]
-    public GameObject camB;
+    private float horizontal;
+    private float vertical;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        animator   = GetComponent<Animator>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        
-        if(Input.GetButtonDown("Fire1")) 
+        Inputs();
+        MoveCharacter();
+        UpdateAnimator();
+
+    }
+
+    #region MEUS MÉTODOS
+
+    // MÉTODO RESPONSAVEL PELAS ENTRADAS DE COMANDO DO USUÁRIO
+    void Inputs()
+    {
+
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
+
+        if (Input.GetButtonDown("Fire1"))
         {
             animator.SetTrigger("Attack");
         };
 
         direction = new Vector3(horizontal, 0f, vertical).normalized;
-        
-        if(direction.magnitude > 0.1f) 
+
+    }
+
+    // MÉTODO RESPONSAVEL POR MOVER O PERSONAGEM
+    void MoveCharacter()
+    {
+        if (direction.magnitude > 0.1f)
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, targetAngle, 0);
             isWalk = true;
-        } else          // if(direction.magnitude <= 0.1f) 
+        }
+        else          // if(direction.magnitude <= 0.1f) 
         {
             isWalk = false;
         }
 
         controller.Move(direction * movementSpeed * Time.deltaTime);
+
+    }
+
+    // MÉTODO RESPONSAVEL EM ATUALIZAR OS ANIMATOR
+    void UpdateAnimator()
+    {
         animator.SetBool("isWalk", isWalk);
-
     }
 
-    private void OnTriggerEnter(Collider other) 
-    {
-        switch(other.gameObject.tag)
-        {
-            case "CamTrigger":
-                camB.SetActive(true);
-                break;
-        }
-    }
-
-    private void OnTriggerExit(Collider other) 
-    {
-        switch(other.gameObject.tag)
-        {
-            case "CamTrigger":
-                camB.SetActive(false);
-                break;
-        }
-    }
+    #endregion
 
 }
