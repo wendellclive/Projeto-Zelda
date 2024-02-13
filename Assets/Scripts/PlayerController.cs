@@ -7,12 +7,13 @@ public class PlayerController : MonoBehaviour
 
     [Header("Config Player")]
     public float movementSpeed = 3f;
-
     private Vector3 direction;
-
     private CharacterController controller;
     private Animator animator;
     private bool isWalk;
+
+    [Header("Camera")]
+    public GameObject camB;
 
     void Start()
     {
@@ -47,4 +48,25 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("isWalk", isWalk);
 
     }
+
+    private void OnTriggerEnter(Collider other) 
+    {
+        switch(other.gameObject.tag)
+        {
+            case "CamTrigger":
+                camB.SetActive(true);
+                break;
+        }
+    }
+
+    private void OnTriggerExit(Collider other) 
+    {
+        switch(other.gameObject.tag)
+        {
+            case "CamTrigger":
+                camB.SetActive(false);
+                break;
+        }
+    }
+
 }
